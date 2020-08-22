@@ -10,7 +10,6 @@
         "mocha": true
     },
     "rules": {
-        "sort-imports": ["error"],
         "semi": ["error", "never"],
         "quotes": ["error", "single"],
         "arrow-body-style": ["error", "as-needed"],
