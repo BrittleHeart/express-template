@@ -32,7 +32,8 @@
     "nodemailer": "^6.4.11",
     "sequelize": "^6.3.4",
     "sqlite3": "^5.0.0",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
