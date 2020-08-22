@@ -1,4 +1,4 @@
-import express, { Router } from 'express'
+import express from 'express'
 import bodyParser from 'body-parser'
 import connection from './database/config'
 import nodemailer from 'nodemailer'
@@ -14,7 +14,6 @@ import * as path from 'path'
 dotenv.config()
 const app = express()
 const upload = multer({storage: './storage/images'})
-const router = Router()
 const logger = winston.createLogger(
     {
         level: 'info',
@@ -38,10 +37,6 @@ const mailer = nodemailer.createTransport({
     },
 })
 
-connection.authenticate()
-    .then(() => console.log('Everything is okey'))
-    .catch(error => logger.log('error', `Invalid credencials ${error}`))
-
 /**
  * ========================================================
  * 
@@ -63,6 +58,9 @@ app.use(helmet(
 app.use(cors())
 app.use(morgan('dev'))
 
+connection.authenticate()
+    .catch(error => logger.log('error', `Invalid credencials ${error}`))
+
 /**
  * ========================================================
  * 
@@ -72,15 +70,11 @@ app.use(morgan('dev'))
  */
 
  fs.readdir(path.resolve('./routes'), (error, files) => {
-     if(error) {
+     if(error)
          logger.log('error', `This directory does not exist ${error.stack}`)
-         throw new Error(`This directory does not exist ${error.stack}`)
-     }
 
-     if(!files) {
+     if(files.length < 1)
         logger.log('warn', 'Directory is empty')
-        throw new Error('Directory is empty')
-     }
 
      files.forEach(file => require(`./routes/${file}`))
  })
@@ -90,4 +84,4 @@ if(process.env.PROJECT_MODE === 'production')
 else if(process.env.PROJECT_MODE === 'development')
     app.listen(PORT, () => console.log(`Server has been exposed here -> http://localhost:${PORT}`))
 
-export {upload, router, logger, mailer}
+export {app, upload, logger, mailer}

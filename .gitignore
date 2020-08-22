@@ -4,3 +4,4 @@
 .env
 database/config.js
 *.sqlite
+*.log
