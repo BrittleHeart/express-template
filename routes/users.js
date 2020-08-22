@@ -1,3 +1,6 @@
 import {app} from '../server'
+import UserController from '../app/controllers/UserController'
 
-app.get('/', (req, res) => res.send('Ok'))
+const user = new UserController()
+
+app.get('/api/v1/users', async (req, res) => await user.index(req, res))
