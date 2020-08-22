@@ -2,3 +2,5 @@
 /dist
 /spec
 .env
+database/config.js
+*.sqlite

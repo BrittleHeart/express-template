@@ -1,30 +1,26 @@
 {
   "name": "express_template",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "MVC express template with CRUD Implementation for free",
   "main": "./server.js",
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/BrittleHeart/Blog"
+    "url": "https://www.github.com/BrittleHeart/express-template"
   },
   "author": "Bartosz Pazdur",
   "license": "MIT",
   "private": false,
   "scripts": {
+    "test": "mocha",
     "start": "node dist/server.bundle.js",
     "dev": "nodemon dist/server.bundle.js -q",
-    "test": "mocha",
-    "watch_server": "webpack --watch --mode development --config webpack.config.js",
-    "watch_react": "webpack --watch --mode development --config webpack.react.config.js",
-    "build_server": "webpack --mode=production --config webpack.config.js",
-    "build_react": "webpack --mode=production --config webpack.react.config.js",
-    "production": " NODE_ENV=production && rm -rf ./node_modules && rm -rf ./dist && rm package-lock.json && npm i && npm run build_server && npm run build_react"
+    "watch": "webpack --watch --mode development --config webpack.config.js",
+    "build": "webpack --mode=production --config webpack.config.js",
+    "production": " NODE_ENV=production && rm -rf ./node_modules && rm -rf ./dist && rm package-lock.json && npm i && npm run build_server"
   },
   "dependencies": {
-    "axios": "^0.18.0",
     "bcrypt": "^3.0.8",
     "body-parser": "^1.18.3",
-    "bootstrap": "^4.4.1",
     "cors": "^2.8.4",
     "csurf": "^1.11.0",
     "dotenv": "^8.2.0",
@@ -32,6 +28,7 @@
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
+    "morgan": "^1.10.0",
     "sequelize": "^6.3.4",
     "sqlite3": "^5.0.0",
     "uuid": "^3.4.0"
