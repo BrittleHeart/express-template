@@ -43,9 +43,9 @@ npm start
 
 ## Database connection
 
-To connect to your database you need to change the **database/config.example.js** -> **database/config.js**, and select preffered by yourself dialect.
+To connect to your database you need to change the **database/config.example.js** -> **database/config.js**, and select preferred by yourself dialect.
 
-You can choose from ***sqlite***, ***mysql***, ***postgres***, or ***mariadb***
+You can choose from ***sqlite***, ***mysql***, ***postgressql***, or ***mariadb***
 
 ## Core Dependecies
 - [Express](https://expressjs.com/)
