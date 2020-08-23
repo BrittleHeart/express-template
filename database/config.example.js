@@ -9,7 +9,7 @@ const connection = new Sequelize({
 })
 
 /** 
- * FOR MYSQL
+ * FOR MYSQL | POSTGRES | MARIADB
  */
 const connection = new Sequelize('database', 'user', 'password', {
     host: 'host',
