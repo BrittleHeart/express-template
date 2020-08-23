@@ -41,6 +41,12 @@ To use nodemon, or
 npm start
 ```
 
+## Database connection
+
+To connect to your database you need to change the **database/config.example.js** -> **database/config.js**, and select preffered by yourself dialect.
+
+You can choose from ***sqlite***, ***mysql***, ***postgres***, or ***mariadb***
+
 ## Core Dependecies
 - [Express](https://expressjs.com/)
 - [Cors](https://www.npmjs.com/package/cors)
