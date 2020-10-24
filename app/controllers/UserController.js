@@ -84,7 +84,7 @@ class UserController {
         const existing = await User.findOne({select: {email}, where: {email}})
         if(existing) {
             logger.log('error', `User with email = ${existing.email} arleady exists`)
-            return res.status(500).json({status: 500, message: `User with email = ${existing.email} arleady exists`})
+            return res.status(400).json({status: 400, message: `User with email = ${existing.email} arleady exists`})
         }
         
         const salt = await bcrypt.genSalt(10)
@@ -110,7 +110,7 @@ class UserController {
         if(!new_user) {
             logger.log('info', 'Could not create user, try again')
 
-            return await res.status(201).json({status: 201, message: 'Could not create user'})
+            return await res.status(400).json({status: 400, message: 'Could not create user'})
         }
 
         logger.log('info', `User with email = ${escapedEmail} has been created`)
@@ -129,6 +129,10 @@ class UserController {
         let {name, password} = req.body
         const {id} = req.params
 
+        if(!id || isNaN(id))
+            return res.status(400).json({status: 400, message: 'Id param must exists and must be integer'})
+
+
         /**
          * I don't want to allow users to change their emails by themselves
          * 
@@ -139,9 +143,6 @@ class UserController {
             password: yup.string().min(3).max(255).trim().required()
         })
 
-        if(!id || isNaN(id))
-            return res.status(400).json({status: 400, message: 'Id param must exists and must be integer'})
-
         try {await user_schema.validate({name, password})}
         catch (error) {return res.status(400).json({message: error.message})}
 
@@ -151,35 +152,69 @@ class UserController {
             }
         })
 
-        if(name === user.name) {
-            await User.update({name: name}, {where: {userId: id}})
-
-            return res.status(200).json({status: 200, message: 'Name has been updated'})
-        }
+        if(!user)
+            return res.status(400).json({status: 404, message: `User with passed ID of ${id}, could not be found`})
         
-        bcrypt.compare(password, user.password, async (error, match) => {
-            if(error) throw res.status(500).json({status: 500, message: 'Something went wrong during passwords compering'})
+        const salt = await bcrypt.genSalt(10)
+        if(!salt.length)
+            return res.status(500).json({status: 500, message: 'Could not generate salt'})
+        
+        const hash = await bcrypt.hash(password, salt)
+        if(!hash.length)
+            return res.status(500).json({status: 500, message: 'Could not generate hash'})
 
-            if(match) {
-                await User.update({password: password}, {where: {userId: id}})
 
-                return res.status(200).json({status: 200, message: 'Password has been updated'})
-            }
-        })
+        /**
+         * This algorithm checks if the request data, is the same as data in database
+         * 
+         * If so, this will not allow user to change them
+         * 
+         * This operation would be useless and would be an wasting memory
+         */
+        const checkMatch = await bcrypt.compare(password, user.password)
+        if(name === user.name && checkMatch)
+            return res.status(200).json({status: 200, message: 'Nothing has been updated. The both values are the same as in database'})
 
-        bcrypt.genSalt(10, (error, salt) => {
-            if(error) throw res.status(500).json({status: 500, message: 'Something went wrong during generating salt'})
 
-            bcrypt.hash(password, salt, async (error, hash) => {
-                if(error) throw res.status(500).json({status: 500, message: 'Invalid hash or entered data'})
+        /**
+         * If the name, that was passed in request is the same as data in database,
+         * 
+         * Then change password instead of everyting. Because that's nonsense
+         * 
+         * And vice versa
+         */
+        if(name === user.name) {
+            const updated_user = await user.update({password: hash})
 
-                password = hash
+            if(!updated_user)
+                return res.status(500).json({status: 500, message: `User with id = ${id}, could not be updated`})
 
-                await User.update({name: name, password: password},{where: {userId: id}})
+            return res.status(200).json({status: 200, message: `User password's with id = ${id} has been updated`})
+        } else if(name !== user.name && checkMatch) {
+            /**
+             * If the name is different, but password is the same as database password only name is going to be updated.
+             * 
+             * Otherwise, if name is the same but password is different, only password is going to be updated.
+             */
+            const updated_user = await user.update({name})
+            if(!updated_user)
+                return res.status(500).json({status: 500, message: `User with id = ${id}, could not be updated`})
 
-                return res.status(200).json({status: 200, message: 'All user data have updated'})
-            })
-        })
+            return res.status(200).json({status: 200, message: `User name's with id = ${id} has been updated`})
+        }
+
+        
+        /**
+            * Otherwise, if name nad password are different, updated them both
+            * 
+            * Can be some situation that potential user, would like to chenge password and name in the same time
+        */
+        const updated_user = await user.update({name, password: hash})
+
+        if(!updated_user)
+            return res.status(500).json({status: 500, message: `User with id = ${id}, could not be updated`})
+
+        return res.status(200).json({status: 200, message: `User with id = ${id} has been updated`})
     }
 
 
@@ -198,7 +233,7 @@ class UserController {
         const user = await User.findOne({where: {userId: id}})
 
         if(!user)
-            return res.status(400).json({status: 400, message: `Wait! User with id = ${id} does not exists`})
+            return res.status(404).json({status: 404, message: `Wait! User with id = ${id} does not exists`})
 
         await User.destroy({where: {userId: id}})
 
