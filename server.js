@@ -38,7 +38,7 @@ const logger = winston.createLogger(
         ),
         transports: [
             new winston.transports.File({filename: 'error.log', dirname: 'storage/logs', level: 'error'}),
-            new winston.transports.File({filename: 'info.log', dirname: 'storage/logs'})
+            new winston.transports.File({filename: 'info.log', dirname: 'storage/logs', level: 'info'})
         ]
     }
 )
