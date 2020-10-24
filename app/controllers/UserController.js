@@ -167,7 +167,7 @@ class UserController {
         /**
          * This algorithm checks if the request data, is the same as data in database
          * 
-         * If so, this will not allow user to change them
+         * If so, algorithm will not allow user to change them
          * 
          * This operation would be useless and would be an wasting memory
          */
@@ -179,7 +179,7 @@ class UserController {
         /**
          * If the name, that was passed in request is the same as data in database,
          * 
-         * Then change password instead of everyting. Because that's nonsense
+         * Then change the password instead of everything. Because that's nonsense
          * 
          * And vice versa
          */
@@ -203,11 +203,11 @@ class UserController {
             return res.status(200).json({status: 200, message: `User name's with id = ${id} has been updated`})
         }
 
-        
+
         /**
-            * Otherwise, if name nad password are different, updated them both
+            * Otherwise, if name and password are different, updated them both
             * 
-            * Can be some situation that potential user, would like to chenge password and name in the same time
+            * Can be some situation that potential user, would like to change password and name in the same time
         */
         const updated_user = await user.update({name, password: hash})
 
