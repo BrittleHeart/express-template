@@ -6,7 +6,7 @@ const yup = require('yup')
 
 class UserController {
     /**
-     * Selects all the data in database
+     * Selects all the data from database
      * 
      * @param {Object} req 
      * @param {Object} res 
