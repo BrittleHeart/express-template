@@ -3,7 +3,15 @@ import bodyParser from 'body-parser'
 import connection from './database/config'
 import nodemailer from 'nodemailer'
 import morgan from 'morgan'
-import winston from 'winston'
+
+
+/**
+ * Winston new formatter
+ */
+import winston, {format} from 'winston'
+const {combine, timestamp, label, printf} = format
+
+
 import helmet from 'helmet'
 import multer from 'multer'
 import dotenv from 'dotenv'
@@ -14,11 +22,20 @@ import * as path from 'path'
 dotenv.config()
 const app = express()
 const upload = multer({storage: './storage/images'})
+
+const myFormat = printf(({ level, message, label, timestamp }) => {
+    return `${timestamp} - [${label}] ${level}: ${message}`;
+});
+
 const logger = winston.createLogger(
     {
         level: 'info',
         defaultMeta: 'user-service',
-        format: winston.format.json(),
+        format: combine(
+            label({ label: 'Right now!' }),
+            timestamp(),
+            myFormat
+        ),
         transports: [
             new winston.transports.File({filename: 'error.log', dirname: 'storage/logs', level: 'error'}),
             new winston.transports.File({filename: 'info.log', dirname: 'storage/logs'})
