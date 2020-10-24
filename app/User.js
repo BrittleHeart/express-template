@@ -12,17 +12,23 @@ const Users = connection.define('users', {
     name: {
         type: Sequelize.STRING,
         allowNull: false,
+        min: 4,
+        max: 10,
         defaultValue: 'Anonim'
     },
 
     email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
+        min: 5,
+        max: 255
     },
 
     password: {
         type: Sequelize.STRING,
+        min: 3,
+        max: 255,
         allowNull: false
     },
 
