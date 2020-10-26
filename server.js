@@ -23,9 +23,9 @@ dotenv.config()
 const app = express()
 const upload = multer({storage: './storage/images'})
 
-const myFormat = printf(({ level, message, label, timestamp }) => {
-    return `${timestamp} - [${label}] ${level}: ${message}`;
-});
+const myFormat = printf(({ level, message, label, timestamp }) => 
+    `${timestamp} - [${label}] ${level}: ${message}`
+)
 
 const logger = winston.createLogger(
     {
@@ -99,6 +99,6 @@ connection.authenticate()
 if(process.env.PROJECT_MODE === 'production') 
     app.listen(PORT)
 else if(process.env.PROJECT_MODE === 'development')
-    app.listen(PORT, () => console.log(`Server has been exposed here -> http://localhost:${PORT}`))
+    app.listen(PORT, () => console.log(`Server has been exposed here -> http://localhost:${PORT} - ${process.memoryUsage().heapUsed / Math.pow(1024, 2)} MB memory usage`))
 
 export {app, upload, logger, mailer}
