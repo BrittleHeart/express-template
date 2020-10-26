@@ -14,13 +14,11 @@ import {config as loggingConfig} from './config/logging'
 import {config as mailConfig} from './config/mail'
 
 dotenv.config()
+
 const app = express()
 const upload = multer({storage: './storage/images'})
-
-const logger = winston.createLogger(loggingConfig)
-
-const PORT = process.env.PORT || process.env.SERVER_PORT
 const mailer = nodemailer.createTransport(mailConfig)
+const logger = winston.createLogger(loggingConfig)
 
 /**
  * ========================================================
@@ -63,6 +61,9 @@ connection.authenticate()
 
      files.forEach(file => require(`./routes/${file}`))
  })
+
+ 
+ const PORT = process.env.PORT || process.env.SERVER_PORT
 
 if(process.env.PROJECT_MODE === 'production') 
     app.listen(PORT)
