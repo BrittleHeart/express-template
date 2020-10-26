@@ -3,56 +3,24 @@ import bodyParser from 'body-parser'
 import connection from './database/config'
 import nodemailer from 'nodemailer'
 import morgan from 'morgan'
-
-
-/**
- * Winston new formatter
- */
-import winston, {format} from 'winston'
-const {combine, timestamp, label, printf} = format
-
-
 import helmet from 'helmet'
 import multer from 'multer'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import winston from 'winston'
 import * as fs from 'fs'
 import * as path from 'path'
+import {config as loggingConfig} from './config/logging'
+import {config as mailConfig} from './config/mail'
 
 dotenv.config()
 const app = express()
 const upload = multer({storage: './storage/images'})
 
-const myFormat = printf(({ level, message, label, timestamp }) => 
-    `${timestamp} - [${label}] ${level}: ${message}`
-)
-
-const logger = winston.createLogger(
-    {
-        level: 'info',
-        defaultMeta: 'user-service',
-        format: combine(
-            label({ label: 'Right now!' }),
-            timestamp(),
-            myFormat
-        ),
-        transports: [
-            new winston.transports.File({filename: 'error.log', dirname: 'storage/logs', level: 'error'}),
-            new winston.transports.File({filename: 'info.log', dirname: 'storage/logs', level: 'info'})
-        ]
-    }
-)
+const logger = winston.createLogger(loggingConfig)
 
 const PORT = process.env.PORT || process.env.SERVER_PORT
-const mailer = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: true, // true for 465, false for other ports
-    auth: {
-      user: process.env.SMTP_USERNAME, 
-      pass: process.env.SMTP_PASSWORD
-    },
-})
+const mailer = nodemailer.createTransport(mailConfig)
 
 /**
  * ========================================================
