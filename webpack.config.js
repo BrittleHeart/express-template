@@ -1,5 +1,6 @@
 const path = require('path')
 const nodeExternals = require('webpack-node-externals')
+this.cliEngine = require("eslint").CLIEngine;
 
 module.exports = {
     entry: './server.js',
